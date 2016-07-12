@@ -54,7 +54,6 @@
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="male"
             android:id="@+id/maleRadioButton"
             android:checked="true"
             android:background="@drawable/images3" />
@@ -62,7 +61,6 @@
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="female"
             android:id="@+id/femaleRadioButton"
             android:checked="false"
             android:background="@drawable/images2" />
