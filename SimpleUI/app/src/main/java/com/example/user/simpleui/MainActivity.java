@@ -1,5 +1,6 @@
 package com.example.user.simpleui;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -11,6 +12,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -18,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    static final int REQUEST_CODE_DRINK_MENU_ACTIVITY = 0;
 
     TextView textView;
     EditText editText;
@@ -100,4 +104,29 @@ public class MainActivity extends AppCompatActivity {
 
         editText.setText("");
     }
+
+    public void goToMenu(View view)
+    {
+        Intent intent = new Intent();
+        intent.setClass(this, DrinkMenuActivity.class);
+        startActivityForResult(intent, REQUEST_CODE_DRINK_MENU_ACTIVITY);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_CODE_DRINK_MENU_ACTIVITY)
+        {
+            if(resultCode == RESULT_OK)
+            {
+                Toast.makeText(this, "§¹¦¨µæ³æ", Toast.LENGTH_SHORT).show();
+                textView.setText(data.getStringExtra("results"));
+            }
+        }
+    }
+
+
+
+
 }
+
