@@ -78,6 +78,16 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
     public void showDrinkOrderDialog(Drink drink)
     {
         DrinkOrder drinkOrder = new DrinkOrder(drink);
+        for(DrinkOrder order : orders)
+        {
+            if(order.drink.name.equals(drink.name))
+            {
+                drinkOrder = order;
+                break;
+            }
+
+        }
+
 
         FragmentManager fragmentManager = getFragmentManager();
 
