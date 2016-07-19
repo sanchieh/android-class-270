@@ -1,7 +1,10 @@
 package com.example.user.simpleui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +18,9 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.parse.FindCallback;
+import com.parse.ParseException;
 
 import org.w3c.dom.Text;
 
@@ -77,16 +83,15 @@ public class MainActivity extends AppCompatActivity {
                 selectedTea = radioButton.getText().toString();
             }
         });
-
-        String history = Utils.readFile(this, "history");
-        String[] datas = history.split("\n");
-        for(String data : datas)
-        {
-            Order order = Order.newInstanceWithData(data);
-            if(order != null)
-                orders.add(order);
-        }
-
+//
+//        String history = Utils.readFile(this, "history");
+//        String[] datas = history.split("\n");
+//        for (String data : datas)
+//        {
+//            Order order = Order.newInstanceWithData(data);
+//            if(order != null)
+//                orders.add(order);
+//        }
 
         setupListView();
         setupSpinner();
@@ -95,12 +100,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setupListView() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
 
-        OrderAdapter adapter = new OrderAdapter(this, orders);
-        listView.setAdapter(adapter);
+        FindCallback<Order> callback = new FindCallback<Order>() {
+            @Override
+            public void done(List<Order> objects, ParseException e) {
+                if (e == null) {
+                    orders = objects;
+                    OrderAdapter adapter = new OrderAdapter(MainActivity.this, orders);
+                    listView.setAdapter(adapter);
+                }
+            }
+        };
+
+        if (networkInfo == null || !networkInfo.isConnected()) {
+            Order.getQuery().fromLocalDatastore().findInBackground(callback);
+        }
+        else
+        {
+            Order.getOrdersFromRemote(callback);
+        }
     }
 
     public void setupSpinner()
+
     {
         String[] data = getResources().getStringArray(R.array.storeInfos);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, data);
@@ -114,9 +138,12 @@ public class MainActivity extends AppCompatActivity {
         textView.setText(text);
 
         Order order = new Order();
-        order.note = text;
-        order.menuResults = menuResults;
-        order.storeInfo = (String)spinner.getSelectedItem();
+        order.setNote(text);
+        order.setMenuResults(menuResults);
+        order.setStoreInfo((String) spinner.getSelectedItem());
+
+        order.pinInBackground("Order");
+        order.saveEventually();
 
         orders.add(order);
 
@@ -184,3 +211,5 @@ public class MainActivity extends AppCompatActivity {
         Log.d("Debug", "MainActivity OnRestart");
     }
 }
+
+

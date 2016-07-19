@@ -22,6 +22,8 @@ import java.util.Objects;
 /**
  * Created by user on 2016/7/14.
  */
+
+
 public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDialog.OnDrinkOrderListener{
 
     TextView totalTextView;
@@ -52,9 +54,9 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
         for(int i = 0; i < names.length; i++)
         {
             Drink drink = new Drink();
-            drink.name = names[i];
-            drink.mPrice = mPrices[i];
-            drink.lPrice = lPrices[i];
+            drink.setName(names[i]);
+            drink.setmPrice(mPrices[i]);
+            drink.setlPrice(lPrices[i]);
             drink.imageId = imageId[i];
             drinks.add(drink);
         }
@@ -78,16 +80,14 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
     public void showDrinkOrderDialog(Drink drink)
     {
         DrinkOrder drinkOrder = new DrinkOrder(drink);
-        for(DrinkOrder order : orders)
+        for (DrinkOrder order : orders)
         {
-            if(order.drink.name.equals(drink.name))
+            if(order.drink.getName().equals(drink.getName()))
             {
                 drinkOrder = order;
                 break;
             }
-
         }
-
 
         FragmentManager fragmentManager = getFragmentManager();
 
@@ -103,7 +103,6 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
         ft.addToBackStack(null);
 
         dialog.show(ft, "DrinkOrderDialog");
-
     }
 
 
@@ -112,7 +111,7 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
         int total = 0;
         for(DrinkOrder order: orders)
         {
-            total += order.mNumber * order.drink.mPrice;
+            total += order.mNumber * order.drink.getmPrice() + order.lNumber * order.drink.getlPrice();
         }
 
         totalTextView.setText(String.valueOf(total));
@@ -133,6 +132,8 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
         intent.putExtra("results", jsonArray.toString());
 
         setResult(RESULT_OK, intent);
+
+
         finish();
     }
 
@@ -174,10 +175,10 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
 
     @Override
     public void onDrinkOrderFinished(DrinkOrder drinkOrder) {
-        boolean flag = false;
+        Boolean flag = false;
         for (int index = 0; index < orders.size() ; index ++)
         {
-            if(orders.get(index).drink.name.equals(drinkOrder.drink.name))
+            if(orders.get(index).drink.getName().equals(drinkOrder.drink.getName()))
             {
                 orders.set(index, drinkOrder);
                 flag = true;
@@ -189,7 +190,5 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
             orders.add(drinkOrder);
 
         updateTotal();
-
-
     }
 }

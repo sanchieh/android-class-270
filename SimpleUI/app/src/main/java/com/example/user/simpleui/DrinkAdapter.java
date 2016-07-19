@@ -24,6 +24,7 @@ public class DrinkAdapter extends BaseAdapter {
         drinkList = drinks;
         inflater = LayoutInflater.from(context);
     }
+
     @Override
     public int getCount() {
         return drinkList.size();
@@ -52,19 +53,17 @@ public class DrinkAdapter extends BaseAdapter {
             holder.lPriceTextView = (TextView)convertView.findViewById(R.id.lPriceTextView);
             convertView.setTag(holder);
         }
-        else{
+        else {
             holder = (Holder)convertView.getTag();
-                    }
+        }
 
-                Drink drink = drinkList.get(position);
-                holder.drinkName.setText(drink.name);
-                holder.mPriceTextView.setText(String.valueOf(drink.mPrice));
-                holder.lPriceTextView.setText(String.valueOf(drink.lPrice));
-                holder.imageView.setImageResource(drink.imageId);
-                return convertView;
-            }
-
-
+        Drink drink = drinkList.get(position);
+        holder.drinkName.setText(drink.getName());
+        holder.mPriceTextView.setText(String.valueOf(drink.getmPrice()));
+        holder.lPriceTextView.setText(String.valueOf(drink.getlPrice()));
+        holder.imageView.setImageResource(drink.imageId);
+        return convertView;
+    }
 
     class Holder{
         ImageView imageView;
