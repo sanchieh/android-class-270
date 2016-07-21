@@ -22,6 +22,8 @@ import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
 import org.w3c.dom.Text;
@@ -134,9 +136,23 @@ public class MainActivity extends AppCompatActivity {
 
     public void setupSpinner()
     {
-        String[] data = getResources().getStringArray(R.array.storeInfos);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, data);
-        spinner.setAdapter(adapter);
+        ParseQuery<ParseObject> parseQuery = new ParseQuery<ParseObject>("StoreInfo");
+        parseQuery.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                List<String> storeInfos = new ArrayList<String>();
+                for(ParseObject object : objects)
+                {
+                    String storeInfo = object.getString("name") + "," + object.getString("address");
+                    storeInfos.add(storeInfo);
+                }
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_dropdown_item, storeInfos);
+                spinner.setAdapter(adapter);
+            }
+        });
+//        String[] data = getResources().getStringArray(R.array.storeInfos);
+//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, data);
+//        spinner.setAdapter(adapter);
     }
 
     public void submit(View view)
